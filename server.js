@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs")
 var path = require("path");
+const { v4: uuidv4 } = require('uuid');
 
 const app = express()
 const PORT = process.env.PORT || 5000;
@@ -17,8 +18,6 @@ app.get("/api/notes", (req, res) => {
         if (err) throw err;
         res.json(allNotes);
     })
-
-    
 })
 
 app.get("/notes", (req, res) => {
@@ -36,7 +35,7 @@ app.post("/api/notes", (req, res) => {
 
     notes = JSON.parse(notes);
 
-    notes.push(req.body)
+    notes.push({...req.body, id: uuidv4()})
 
     fs.writeFileSync(path.join(__dirname + "/db/db.json"), JSON.stringify(notes))
 
@@ -48,13 +47,15 @@ app.delete("/api/notes/:id", (req, res) => {
     let notes = fs.readFileSync(path.join(__dirname + "/db/db.json"));
 
     notes = JSON.parse(notes);
+    
     let id = req.params.id
 
-    notes.splice(id, id)
+    const deleteNote = notes.findIndex( (note) =>  note.id = id)
+
+    notes.splice(deleteNote, 1)
 
     fs.writeFileSync(path.join(__dirname + "/db/db.json"), JSON.stringify(notes))
     
-    console.log(notes);
     res.json(notes)
 })
 
