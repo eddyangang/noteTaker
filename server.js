@@ -50,7 +50,7 @@ app.delete("/api/notes/:id", (req, res) => {
     
     let id = req.params.id
 
-    const deleteNote = notes.findIndex( (note) =>  note.id = id)
+    const deleteNote = notes.findIndex( (note) =>  note.id == id)
 
     notes.splice(deleteNote, 1)
 
